@@ -7,6 +7,5 @@ int main(int argc, char** argv){
         return -1;
     }
     ELF(std::string(argv[1]));
-
     return 0;
 }

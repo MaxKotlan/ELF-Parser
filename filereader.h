@@ -19,6 +19,7 @@ class FileReader{
         }
 
         std::vector<uint8_t>* data() { return &_data; };
+        std::vector<uint8_t>::iterator begin() { return _data.begin(); };
 
     private:
         std::string _path;
