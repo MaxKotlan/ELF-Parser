@@ -72,13 +72,23 @@ class ELFHeader{
         }
     
         void ReadEntryAddress(){
-            ReadRaw(_entry_point, _reader_address);
-            std::cout << "Entry Point: " << std::hex << (int)_entry_point << std::endl;
+            ReadRaw(_e_entry, _reader_address, static_cast<uint8_t>(_address_size));
+            std::cout << "Entry Point: " << std::hex << (int)_e_entry << std::endl;
         }
 
         void ReadProgramHeaderTable(){
-            ReadRaw(_program_header_table, _reader_address);
-            std::cout << "Program Header Table: " << std::hex << (int)_program_header_table << std::endl;
+            ReadRaw(_e_phoff, _reader_address, static_cast<uint8_t>(_address_size));
+            std::cout << "Program Header Table: " << std::hex << (int)_e_phoff << std::endl;
+        }
+
+        void ReadShoff(){
+            ReadRaw(_e_shoff, _reader_address, static_cast<uint8_t>(_address_size));
+            std::cout << "Shoff: " << std::hex << (int)_e_shoff << std::endl;
+        }
+
+        void ReadFlags(){
+            ReadRaw(_e_flags, _reader_address);
+            std::cout << "Flags: " << std::hex << (int)_e_flags << std::endl;
         }
 
     public:
@@ -93,9 +103,11 @@ class ELFHeader{
            Padding(7);
            ReadOBJType();
            ReadInstructionSet();
-           ReadVersion();
+           _reader_address+=4;//version again?
            ReadEntryAddress();
            ReadProgramHeaderTable();
+           ReadShoff();
+           ReadFlags();
        }
 
 
@@ -162,6 +174,8 @@ class ELFHeader{
             ET_HIPROC = 0xffff
         } _instruction_set;
 
-        uint64_t _entry_point;
-        uint64_t _program_header_table;
+        uint64_t _e_entry;
+        uint64_t _e_phoff;
+        uint64_t _e_shoff;
+        uint32_t _e_flags;
 };
