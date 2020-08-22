@@ -1,25 +1,7 @@
 #pragma once
 #include <iostream>
 #include <cstring>
-
-
-template <typename T>
-void ReadRaw(T& result, std::vector<uint8_t>::iterator& it, uint8_t memorytype=0){
-    switch(memorytype){
-        case 0:
-            std::memcpy(&result, &(*it), sizeof(T));
-            it+=sizeof(T);
-            break;
-        case 1:
-            std::memcpy(&result, &(*it), sizeof(uint32_t));
-            it+=sizeof(uint32_t);
-            break;
-        case 2:
-            std::memcpy(&result, &(*it), sizeof(uint64_t));
-            it+=sizeof(uint64_t);
-            break;
-    }
-}
+#include "readraw.h"
 
 class ELFHeader{
     protected:
@@ -125,7 +107,7 @@ class ELFHeader{
 
     public:
 
-       ELFHeader(std::vector<uint8_t>::iterator begin) : _reader_address(begin){
+       ELFHeader(std::vector<uint8_t>::iterator begin) : _reader_address(begin), _reader_address_begin(begin){
            ReadMagic();
            ReadAddressSize();
            ReadEndianness();
@@ -148,8 +130,13 @@ class ELFHeader{
            ReadSectionHeaderIndex();
        }
 
+        std::vector<uint8_t>::iterator GetProgramHeaderOffset(){
+            return _reader_address_begin + _e_phoff;
+        }
+
 
     private:
+        const std::vector<uint8_t>::iterator _reader_address_begin;
         std::vector<uint8_t>::iterator _reader_address;
         uint32_t _magic;
 
@@ -201,15 +188,29 @@ class ELFHeader{
         } _obj_type;
 
         enum class InstructionSet : uint16_t{
-            ET_NONE   = 0x00,
-            ET_REL    = 0x01,
-            ET_EXEC   = 0x02,
-            ET_DYN    = 0x03,
-            ET_CORE   = 0x04,
-            ET_LOOS   = 0xfe00,
-            ET_HIOS   = 0xfeff,
-            ET_LOPROC = 0xff00,
-            ET_HIPROC = 0xffff
+            INST_UNSPECIFIED    = 0x00,
+            INST_ATANDTWE32100  = 0x01,
+            INST_SPARC          = 0x02,
+            INST_x86            = 0x03,
+            INST_Motorola68000  = 0x04,
+            INST_Motorola88000  = 0x05,
+            INST_INTELMCU       = 0x06,
+            INST_Intel80860     = 0x07,
+            INST_MIPS           = 0x08,
+            INST_IBM_SYSTEM370  = 0x09,
+            INST_MIPSRS3000     = 0x0A,
+            INST_HP_PA_RISC     = 0x0E,
+            INST_INTEL80960     = 0x13,
+            INST_POWER_PC       = 0x14,
+            INST_POWER_PC64     = 0x15,
+            INST_S390           = 0x16,
+            INST_ARM            = 0x28,
+            INST_SUPERH         = 0x2A,
+            INST_IA64           = 0x32,
+            INST_AMD64          = 0x3E,
+            INST_TMS329C6000    = 0x8C,
+            INST_ARM_64         = 0xB7,
+            INST_RISC_V         = 0xF3 
         } _instruction_set;
 
         uint64_t _e_entry;
