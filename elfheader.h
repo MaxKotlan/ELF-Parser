@@ -78,17 +78,49 @@ class ELFHeader{
 
         void ReadProgramHeaderTable(){
             ReadRaw(_e_phoff, _reader_address, static_cast<uint8_t>(_address_size));
-            std::cout << "Program Header Table: " << std::hex << (int)_e_phoff << std::endl;
+            std::cout << "Program Header Table Pointer(offset): " << std::hex << (int)_e_phoff << std::endl;
         }
 
         void ReadShoff(){
             ReadRaw(_e_shoff, _reader_address, static_cast<uint8_t>(_address_size));
-            std::cout << "Shoff: " << std::hex << (int)_e_shoff << std::endl;
+            std::cout << "Section Header Offset Pointer(offset): " << std::hex << (int)_e_shoff << std::endl;
         }
 
         void ReadFlags(){
             ReadRaw(_e_flags, _reader_address);
             std::cout << "Flags: " << std::hex << (int)_e_flags << std::endl;
+        }
+
+        void ReadEHSize(){
+            ReadRaw(_e_ehsize, _reader_address);
+            std::cout << "File Header Size: " << std::hex << (int)_e_ehsize << std::endl;
+        }
+
+        void ReadPHEntSize(){
+            ReadRaw(_e_phentsize, _reader_address);
+            std::cout << "Program Header Entry Size: " << std::hex << (int)_e_phentsize << std::endl;
+        }
+
+        void ReadPHNCount(){
+            ReadRaw(_e_phnum, _reader_address);
+            std::cout << "Program Header Count: " << std::hex << (int)_e_phnum << std::endl;
+        }
+
+
+        void ReadSectionHeaderEntrySize(){
+            ReadRaw(_e_shentsize, _reader_address);
+            std::cout << "Section Header Entry Size: " << std::hex << (int)_e_shentsize << std::endl;
+        }
+
+
+        void ReadSectionHeaderCount(){
+            ReadRaw(_e_shnum, _reader_address);
+            std::cout << "Section Header Count: " << std::hex << (int)_e_shnum << std::endl;
+        }
+
+        void ReadSectionHeaderIndex(){
+            ReadRaw(_e_shstrndx, _reader_address);
+            std::cout << "Section Header Index: " << std::hex << (int)_e_shstrndx << std::endl;
         }
 
     public:
@@ -108,6 +140,12 @@ class ELFHeader{
            ReadProgramHeaderTable();
            ReadShoff();
            ReadFlags();
+           ReadEHSize();
+           ReadPHEntSize();
+           ReadPHNCount();
+           ReadSectionHeaderEntrySize();
+           ReadSectionHeaderCount();
+           ReadSectionHeaderIndex();
        }
 
 
@@ -178,4 +216,11 @@ class ELFHeader{
         uint64_t _e_phoff;
         uint64_t _e_shoff;
         uint32_t _e_flags;
+        uint16_t _e_ehsize;
+        uint16_t _e_phentsize;//
+        uint16_t _e_phnum;
+        uint16_t _e_shentsize;
+        uint16_t _e_shnum;
+        uint16_t _e_shstrndx;
+
 };
